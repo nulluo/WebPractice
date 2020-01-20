@@ -1,0 +1,376 @@
+﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+          "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+    <meta http-equiv="Content-Script-Type" content="text/javascript">
+    <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
+    <link rel="stylesheet" type="text/css" href="WhichPrecure.css">
+    <script type="text/javascript" src="WhichPrecureCommon.js"></script>
+    <script type="text/javascript" src="jquery.js"></script>
+    <script type="text/javascript" src="jquery.socialbutton.js"></script>
+
+    <!--
+        「このプリキュアは誰？」
+
+            -->
+
+
+    <title>プリキュア誰かな？</title>
+
+    <script type="text/javascript">
+<!--
+    window.onload = init;
+
+
+    function init() {
+        document.getElementById('ResultArea').hidden = true;
+        InitializeQuestions();
+
+        $('.TweetButton').socialbutton('twitter', {
+            button: 'horizontal',
+            text: '「プリキュア誰かな？」#darecure',
+            url: 'http://www.geocities.jp/nero021/programming/WhichPrecure/WhichPrecure.html'
+
+        });
+    }
+
+    function displayQAndAArea(){
+        document.getElementById('initialArea').hidden = true;
+        document.getElementById('qAndAArea').hidden = false;
+        DisplayNextQuestion();
+    }
+
+        //プリキュアボタンが押されたときの処理
+    function PreButtonClick(answer) {
+        CheckAnswer(answer)
+        CurrentChallengeNo++;
+        DisplayNextQuestion();
+
+        if (CurrentChallengeNo == ChallengeMaxNum) {
+                EndGame();
+        }
+    }
+
+    function CheckAnswer(answer) {
+
+        //注：CurrentChallengeNo：現在チャレンジNo＝回答済みチャレンジ数
+        if (answer == GetAnswerOfQuestion(challenges[CurrentChallengeNo])) {
+            CorrectNum++;
+            //未実装：デバッグコード除去
+            console.log('チャレンジNo.%d：正解', CurrentChallengeNo);
+        } else {
+            //未実装：デバッグコード除去
+            console.log('チャレンジNo.%d：不正解', CurrentChallengeNo);
+        }
+        //未実装：デバッグコード除去
+        console.log('現在チャレンジID=回答済みチャレンジ数：%d　問題ID:%d　正解番号：%d　回答:%d', CurrentChallengeNo, challenges[CurrentChallengeNo], GetAnswerOfQuestion(challenges[CurrentChallengeNo]), answer);
+    }
+
+    function DisplayNextQuestion() {
+        var nextQ = challenges[CurrentChallengeNo ];
+        img1 = document.getElementById("QuestionImage");
+        img1.setAttribute("src", "Image/Question/Small/" + nextQ + ".jpg");
+        document.getElementById('challengeNo').innerHTML= '<p>第' + (CurrentChallengeNo + 1) + '問</p>'
+    }
+
+        //ゲーム終了処理
+    function EndGame() {
+        document.getElementById('qAndAArea').hidden = true;
+        document.getElementById('ResultArea').hidden = false;
+        var img1 = document.getElementById("imgResult");
+        var img2 = document.getElementById("imgClear");
+        if (CurrentChallengeNo == CorrectNum) {
+            img1.setAttribute("src", "Image/Sakitanu.gif");
+            img2.setAttribute("src", "Image/GameClear.gif");
+
+        } else {
+            img1.setAttribute("src", "Image/GameOver.jpg");
+        }
+
+        var rate = CorrectNum / CurrentChallengeNo * 100;
+        document.getElementById('CorrectRate').innerHTML = 'あなたの正解率は' + rate + '%です';
+
+        $('.TweetButton').socialbutton('twitter', {
+            button: 'horizontal',
+            text: '「プリキュア誰かな？」で正解率' + rate + '%を達成しました。 #darecure',
+            url: 'http://www.geocities.jp/nero021/programming/WhichPrecure/WhichPrecure.html'
+        });
+
+    }
+
+        //ボタン操作
+    function ButtonMouseDown(buttonID) {
+        document.getElementById('button' + buttonID).setAttribute('src', 'Image/button/pushed/Img' + buttonID + 'pushed.png')
+    }
+    function ButtonMouseUp(buttonID) {
+        document.getElementById('button' + buttonID).setAttribute('src', 'Image/button/Img' + buttonID + '.png')
+    }
+
+
+
+
+
+
+    //--------------------------------グローバル変数--------------------------------
+    //ランダムに選択された出題問題
+    var challenges;
+
+    //正解数
+    var CorrectNum = 0;
+    //現在のチャレンジNo.
+    var CurrentChallengeNo = 0;
+
+    //プリキュア配列定義
+    //    '未実装：現在、どこからも参照されない無駄配列になっている
+    var precures = new Object();
+
+    precures['0101'] = '美墨なぎさ';
+    precures['0102'] = '雪城ほのか';
+    precures['0103'] = '九条ひかり';
+    precures['0201'] = '日向咲';
+    precures['0202'] = '美翔舞';
+    precures['0301'] = '夢原のぞみ';
+    precures['0302'] = '夏木りん';
+    precures['0303'] = '春日野うらら';
+    precures['0304'] = '秋元こまち';
+    precures['0305'] = '水無月かれん';
+    precures['0306'] = '美々野くるみ';
+    precures['0401'] = '桃園ラブ';
+    precures['0402'] = '蒼乃美希';
+    precures['0403'] = '山吹祈里';
+    precures['0404'] = '東せつな';
+    precures['0501'] = '花咲つぼみ';
+    precures['0502'] = '来海えりか';
+    precures['0503'] = '明堂院いつき';
+    precures['0504'] = '月影ゆり';
+    precures['0601'] = '北条響';
+    precures['0602'] = '南野奏';
+    precures['0603'] = '黒川エレン';
+    precures['0604'] = '調辺アコ';
+    precures['0701'] = '星空みゆき';
+    precures['0702'] = '日野あかね';
+    precures['0703'] = '黄瀬やよい';
+    precures['0704'] = '緑川なお';
+    precures['0705'] = '青木れいか';
+    precures['0801'] = '相田マナ';
+    precures['0802'] = '菱川六花';
+    precures['0803'] = '四葉ありす';
+    precures['0804'] = '剣崎真琴';
+    precures['0805'] = '円亜久里';
+    precures['0901'] = '愛乃めぐみ';
+    precures['0902'] = '白雪ひめ';
+    precures['0903'] = '大森ゆうこ';
+    precures['0904'] = '氷川いおな';
+    precures['1001'] = '春野はるか';
+    precures['1002'] = '海藤みなみ';
+    precures['1003'] = '天ノ川きらら';
+    precures['1004'] = '紅城トワ';
+        
+//-->
+    </script>
+
+    <!--  未実装：テストコード削除-->
+    <script type="text/javascript" src="TestCodes.js"></script>
+
+</head>
+<body>
+    <noscript>
+        <h1>このページで遊ぶためには、JavaScriptを有効にしてください</h1>
+    </noscript>
+
+    <h1>プリキュア誰かな？　ver. 1.0.0.0</h1>
+    <hr>
+
+    <div id="initialArea">
+        <button onclick="displayQAndAArea();">ゲームスタート</button>
+    </div>
+
+    <div id="qAndAArea" hidden="hidden">
+        <div id="question">
+            <div id="challengeNo"><p></p></div>
+            <div id="challengeText"><p>このプリキュアは誰でしょう？</p></div>
+            <div id="imgWrap">
+                <img id="QuestionImage">
+            </div>
+        </div>
+        <div id="buttonArea">
+            <p id="ButtonHeaderText">↓答を選んで押してね</p>
+            <table id="buttons">
+                <tr>
+                    <td>
+                        <table>
+                            <tr>
+                                <td><img src="Image/button/Img0101.png" alt="美墨なぎさ" width="30" height="30" onclick="PreButtonClick('0101');" onmousedown="    ButtonMouseDown('0101');" onmouseup="    ButtonMouseUp('0101');" id="button0101"></td>
+                                <td><img src="Image/button/Img0102.png" alt="雪城ほのか" width="30" height="30" onclick="PreButtonClick('0102');" onmousedown="    ButtonMouseDown('0102');" onmouseup="    ButtonMouseUp('0102');" id="button0102"></td>
+                                <td><img src="Image/button/Img0103.png" alt="九条ひかり" width="30" height="30" onclick="PreButtonClick('0103');" onmousedown="    ButtonMouseDown('0103');" onmouseup="    ButtonMouseUp('0103');" id="button0103"></td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <table>
+                            <tr>
+                                <td><img src="Image/button/Img0201.png" alt="日向咲" width="30" height="30" onclick="PreButtonClick('0201');" onmousedown="    ButtonMouseDown('0201');" onmouseup="    ButtonMouseUp('0201');" id="button0201"></td>
+                                <td><img src="Image/button/Img0202.png" alt="美翔舞" width="30" height="30" onclick="PreButtonClick('0202');" onmousedown="    ButtonMouseDown('0202');" onmouseup="    ButtonMouseUp('0202');" id="button0202"></td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <table>
+                            <tr>
+                                <td><img src="Image/button/Img0301.png" alt="夢原のぞみ" width="30" height="30" onclick="PreButtonClick('0301');" onmousedown="    ButtonMouseDown('0301');" onmouseup="    ButtonMouseUp('0301');" id="button0301"></td>
+                                <td><img src="Image/button/Img0302.png" alt="夏木りん" width="30" height="30" onclick="PreButtonClick('0302');" onmousedown="    ButtonMouseDown('0302');" onmouseup="    ButtonMouseUp('0302');" id="button0302"></td>
+                                <td><img src="Image/button/Img0303.png" alt="春日野うらら" width="30" height="30" onclick="PreButtonClick('0303');" onmousedown="    ButtonMouseDown('0303');" onmouseup="    ButtonMouseUp('0303');" id="button0303"></td>
+                                <td><img src="Image/button/Img0304.png" alt="秋元こまち" width="30" height="30" onclick="PreButtonClick('0304');" onmousedown="    ButtonMouseDown('0304');" onmouseup="    ButtonMouseUp('0304');" id="button0304"></td>
+                                <td><img src="Image/button/Img0305.png" alt="水無月かれん" width="30" height="30" onclick="PreButtonClick('0305');" onmousedown="    ButtonMouseDown('0305');" onmouseup="    ButtonMouseUp('0305');" id="button0305"></td>
+                                <td><img src="Image/button/Img0306.png" alt="美々野くるみ" width="30" height="30" onclick="PreButtonClick('0306');" onmousedown="    ButtonMouseDown('0306');" onmouseup="    ButtonMouseUp('0306');" id="button0306"></td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <table>
+                            <tr>
+                                <td><img src="Image/button/Img0401.png" alt="桃園ラブ" width="30" height="30" onclick="PreButtonClick('0401');" onmousedown="    ButtonMouseDown('0401');" onmouseup="    ButtonMouseUp('0401');" id="button0401"></td>
+                                <td><img src="Image/button/Img0402.png" alt="蒼乃美希" width="30" height="30" onclick="PreButtonClick('0402');" onmousedown="    ButtonMouseDown('0402');" onmouseup="    ButtonMouseUp('0402');" id="button0402"></td>
+                                <td><img src="Image/button/Img0403.png" alt="山吹祈里" width="30" height="30" onclick="PreButtonClick('0403');" onmousedown="    ButtonMouseDown('0403');" onmouseup="    ButtonMouseUp('0403');" id="button0403"></td>
+                                <td><img src="Image/button/Img0404.png" alt="東せつな" width="30" height="30" onclick="PreButtonClick('0404');" onmousedown="    ButtonMouseDown('0404');" onmouseup="    ButtonMouseUp('0404');" id="button0404"></td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <table>
+                            <tr>
+                                <td><img src="Image/button/Img0501.png" alt="花咲つぼみ" width="30" height="30" onclick="PreButtonClick('0501');" onmousedown="    ButtonMouseDown('0501');" onmouseup="    ButtonMouseUp('0501');" id="button0501"></td>
+                                <td><img src="Image/button/Img0502.png" alt="来海えりか" width="30" height="30" onclick="PreButtonClick('0502');" onmousedown="    ButtonMouseDown('0502');" onmouseup="    ButtonMouseUp('0502');" id="button0502"></td>
+                                <td><img src="Image/button/Img0503.png" alt="明堂院いつき" width="30" height="30" onclick="PreButtonClick('0503');" onmousedown="    ButtonMouseDown('0503');" onmouseup="    ButtonMouseUp('0503');" id="button0503"></td>
+                                <td><img src="Image/button/Img0504.png" alt="月影ゆり" width="30" height="30" onclick="PreButtonClick('0504');" onmousedown="    ButtonMouseDown('0504');" onmouseup="    ButtonMouseUp('0504');" id="button0504"></td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <table>
+                            <tr>
+                                <td><img src="Image/button/Img0601.png" alt="北条響" width="30" height="30" onclick="PreButtonClick('0601');" onmousedown="    ButtonMouseDown('0601');" onmouseup="    ButtonMouseUp('0601');" id="button0601"></td>
+                                <td><img src="Image/button/Img0602.png" alt="南野奏" width="30" height="30" onclick="PreButtonClick('0602');" onmousedown="    ButtonMouseDown('0602');" onmouseup="    ButtonMouseUp('0602');" id="button0602"></td>
+                                <td><img src="Image/button/Img0603.png" alt="黒川エレン" width="30" height="30" onclick="PreButtonClick('0603');" onmousedown="    ButtonMouseDown('0603');" onmouseup="    ButtonMouseUp('0603');" id="button0603"></td>
+                                <td><img src="Image/button/Img0604.png" alt="調辺アコ" width="30" height="30" onclick="PreButtonClick('0604');" onmousedown="    ButtonMouseDown('0604');" onmouseup="    ButtonMouseUp('0604');" id="button0604"></td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <table>
+                            <tr>
+                                <td><img src="Image/button/Img0701.png" alt="星空みゆき" width="30" height="30" onclick="PreButtonClick('0701');" onmousedown="    ButtonMouseDown('0701');" onmouseup="    ButtonMouseUp('0701');" id="button0701"></td>
+                                <td><img src="Image/button/Img0702.png" alt="日野あかね" width="30" height="30" onclick="PreButtonClick('0702');" onmousedown="    ButtonMouseDown('0702');" onmouseup="    ButtonMouseUp('0702');" id="button0702"></td>
+                                <td><img src="Image/button/Img0703.png" alt="黄瀬やよい" width="30" height="30" onclick="PreButtonClick('0703');" onmousedown="    ButtonMouseDown('0703');" onmouseup="    ButtonMouseUp('0703');" id="button0703"></td>
+                                <td><img src="Image/button/Img0704.png" alt="緑川なお" width="30" height="30" onclick="PreButtonClick('0704');" onmousedown="    ButtonMouseDown('0704');" onmouseup="    ButtonMouseUp('0704');" id="button0704"></td>
+                                <td><img src="Image/button/Img0705.png" alt="青木れいか" width="30" height="30" onclick="PreButtonClick('0705');" onmousedown="    ButtonMouseDown('0705');" onmouseup="    ButtonMouseUp('0705');" id="button0705"></td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <table>
+                            <tr>
+                                <td><img src="Image/button/Img0801.png" alt="相田マナ" width="30" height="30" onclick="PreButtonClick('0801');" onmousedown="    ButtonMouseDown('0801');" onmouseup="    ButtonMouseUp('0801');" id="button0801"></td>
+                                <td><img src="Image/button/Img0802.png" alt="菱川六花" width="30" height="30" onclick="PreButtonClick('0802');" onmousedown="    ButtonMouseDown('0802');" onmouseup="    ButtonMouseUp('0802');" id="button0802"></td>
+                                <td><img src="Image/button/Img0803.png" alt="四葉ありす" width="30" height="30" onclick="PreButtonClick('0803');" onmousedown="    ButtonMouseDown('0803');" onmouseup="    ButtonMouseUp('0803');" id="button0803"></td>
+                                <td><img src="Image/button/Img0804.png" alt="剣崎真琴" width="30" height="30" onclick="PreButtonClick('0804');" onmousedown="    ButtonMouseDown('0804');" onmouseup="    ButtonMouseUp('0804');" id="button0804"></td>
+                                <td><img src="Image/button/Img0805.png" alt="円亜久里" width="30" height="30" onclick="PreButtonClick('0805');" onmousedown="    ButtonMouseDown('0805');" onmouseup="    ButtonMouseUp('0805');" id="button0805"></td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <table>
+                            <tr>
+                                <td><img src="Image/button/Img0901.png" alt="愛乃めぐみ" width="30" height="30" onclick="PreButtonClick('0901');" onmousedown="    ButtonMouseDown('0901');" onmouseup="    ButtonMouseUp('0901');" id="button0901"></td>
+                                <td><img src="Image/button/Img0902.png" alt="白雪ひめ" width="30" height="30" onclick="PreButtonClick('0902');" onmousedown="    ButtonMouseDown('0902');" onmouseup="    ButtonMouseUp('0902');" id="button0902"></td>
+                                <td><img src="Image/button/Img0903.png" alt="大森ゆうこ" width="30" height="30" onclick="PreButtonClick('0903');" onmousedown="    ButtonMouseDown('0903');" onmouseup="    ButtonMouseUp('0903');" id="button0903"></td>
+                                <td><img src="Image/button/Img0904.png" alt="氷川いおな" width="30" height="30" onclick="PreButtonClick('0904');" onmousedown="    ButtonMouseDown('0904');" onmouseup="    ButtonMouseUp('0904');" id="button0904"></td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <table>
+                            <tr>
+                                <td><img src="Image/button/Img1001.png" alt="春野はるか" width="30" height="30" onclick="PreButtonClick('1001');" onmousedown="    ButtonMouseDown('1001');" onmouseup="    ButtonMouseUp('1001');" id="button1001"></td>
+                                <td><img src="Image/button/Img1002.png" alt="海藤みなみ" width="30" height="30" onclick="PreButtonClick('1002');" onmousedown="    ButtonMouseDown('1002');" onmouseup="    ButtonMouseUp('1002');" id="button1002"></td>
+                                <td><img src="Image/button/Img1003.png" alt="天ノ川きらら" width="30" height="30" onclick="PreButtonClick('1003');" onmousedown="    ButtonMouseDown('1003');" onmouseup="    ButtonMouseUp('1003');" id="button1003"></td>
+                                <td><img src="Image/button/Img1004.png" alt="紅城トワ" width="30" height="30" onclick="PreButtonClick('1004');" onmousedown="    ButtonMouseDown('1004');" onmouseup="    ButtonMouseUp('1004');" id="button1004"></td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+                <tr></tr>
+                <tr></tr>
+            </table>
+        </div>
+
+    </div>
+
+    <!--結果表示テーブル-->
+    <div id="ResultArea">
+        <p id="CorrectRate">あなたの正解率はNN%です</p>
+        <img id="imgClear" />
+        <br />
+        <img id="imgResult" />
+        <br />
+        <button onclick="location.reload();">はじめに戻る</button>
+    </div>
+
+    <!--テスト領域-->
+    <div id="testCodes" hidden="hidden">
+        <table border="1" align="center">
+            <tr>
+                <td>
+                    <p>テスト用コード</p>
+                    <button onclick="JumpToGameOver();">終了状態（GAMEOVER）へジャンプ</button>
+                    <button onclick="JumpToGameClear();">終了状態（GAMECLEAR）へジャンプ</button>
+                    <button onclick="ShowShuffledQuestion();">出題される問題配列の中身をチェック</button>
+                    <br />
+                    <form name="testForm">
+                        <INPUT size="20" type="text" name="questionID"><INPUT type="button" value="問題IDを指定して正解をチェック" onclick="CheckQuestionAndAnswer(document.testForm.questionID.value)">
+                    </form>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <!--フッター-->
+    <div id="footer">
+        <p><a href="../ProgramsList.html">プログラム一覧に戻る</a></p>
+        <p>つくった人⇒<a href="http://twitter.com/k_nulluo" target="_blank">@k_nulluo</a></p>
+        <p>プリキュアボタン作成⇒<a href="https://twitter.com/j9mz23" target="_blank">@j9mz23</a>さん</p>
+        <div class="TweetButton"></div>
+        <div id="history">
+            <p>★更新履歴★</p>
+            <ul>
+                <li>2015/10/18 Ver0.0.1.0:(試作版)：　公開開始</li>
+                <li>2015/11/11 Ver0.0.2.0:(試作版)：　j9mz23さんのアイコンを回答ボタンとして設置</li>
+                <li>2015/11/14 Ver0.0.3.0:(試作版)：　全問終了後に正解率を表示。うっとうしかったダイアログ表示を撤廃</li>
+                <li>2015/11/15 Ver0.0.4.0:(試作版)：　問題数を45種に増量。プレイするたびに出題がランダムに変化するようになった。見た目をちょっと良くした</li>
+                <li>2015/12/06 Ver1.0.0.0：　GO!プリンセスプリキュアへの対応終了。問題数は約70種に増量。Twitterで正解率をつぶやけるようにしました。やりたい機能はだいたい実現できたので（試作版）の但し書きを外しました。</li>
+            </ul>
+        </div>
+
+    </div>
+
+
+</body>
+</html>

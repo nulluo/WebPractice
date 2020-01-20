@@ -1,0 +1,141 @@
+﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+          "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+    <meta http-equiv="Content-Script-Type" content="text/javascript">
+    <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
+    <link rel="stylesheet" type="text/css" href="HowManyYearsAgo_Precure.css">
+    <script type="text/javascript" src="jquery.js"></script>
+<!--
+ 「指定されたプリキュアが何年前に放送されていたかを計算します」
+   
+-->    
+    <title>あのプリキュア何年前だっけ？</title>
+    <style type="text/css">
+        body {
+            text-align: center;
+            padding: 20px;
+        }
+    </style>
+
+    <script type="text/javascript">
+<!--
+    //window.onload = init;
+
+    //function init() {
+          
+    //}
+
+    //プリキュア定数
+    var PrecureMaxNum=16
+    var PrecureBornYear = 2004
+
+    //プリキュア配列定義
+    var precure = new Object();
+
+    precure[0] = 'ふたりはプリキュア';
+    precure[1] = 'ふたりはプリキュア Max Heart';
+    precure[2] = 'ふたりはプリキュア Splash☆Star';
+    precure[3] = 'Yes! プリキュア5';
+    precure[4] = 'Yes! プリキュア5 Go Go!';
+    precure[5] = 'フレッシュプリキュア！';
+    precure[6] = 'ハートキャッチプリキュア！';
+    precure[7] = 'スイートプリキュア♪';
+    precure[8] = 'スマイルプリキュア';
+    precure[9] = 'ドキドキプリキュア';
+    precure[10] = 'ハピネスチャージプリキュア！';
+    precure[11] = 'Go！プリンセスプリキュア';
+    precure[12] = '魔法つかいプリキュア！';
+    precure[13] = 'キラキラ☆プリキュアアラモード';
+    precure[14] = 'HUGっと！プリキュア';
+    precure[15] = 'スター☆トゥインクルプリキュア';
+
+       
+    function PrecureYearCheck(){
+        var choice = $("#precureSelect").val();
+        if (choice === "") {
+            return;
+        }
+
+        var years = GetHowManyYearsAgo(choice);
+        var message
+        if (years < 0){
+            //UNIMPLEMENTED：お前…タイムリープしてね？
+            message = (-years) + "年後";
+        }else if(years===0) {
+            message = "今年";
+        }else{
+            message = years + "年前";
+        }
+        message = precure[choice] + "は" + message + "のプリキュアです。";
+
+        $("#Input").css('display', 'none');
+        $("#Result").html(message);
+        $("#Retry").css('visibility', 'visible');
+        $('#Share .twitter').attr('href', "http://twitter.com/intent/tweet?text= " + message + "　 http://www.geocities.jp/nero021/programming/HowManyYearsAgo/HowManyYearsAgo_Precure.html&hashtags=あのプリキュア何年前だっけ")
+    }
+
+    function GetHowManyYearsAgo(precureNo) {
+        var dt1 = new Date();
+        return dt1.getFullYear() - PrecureBornYear - precureNo
+    }
+
+//-->
+    </script>
+
+</head>
+<body bgcolor="#FFFFFF">
+
+    <h1>あのプリキュア何年前だっけ？</h1>
+    <hr>
+    <p></p>
+    <div id="Input">
+        <script type="text/javascript">
+<!--
+        //コンボボックス配置
+        document.write("<select id=\"precureSelect\">");
+        document.write("<option value=\"\">*選んでください</option>")
+        for (var i = 0; i <= PrecureMaxNum - 1; i++) {
+            document.write("<option value=\"" + i + "\">" + precure[i] + "</option>")
+        }
+        document.write("</select>");
+        document.write("が何年前か");
+
+        //ボタン配置
+        document.write("<button onclick=\"PrecureYearCheck();\">調べる</button>");
+        document.write("<br>");
+
+//-->
+        </script>
+    </div>
+    <div id="Result" ></div>
+    <p></p>
+    <button id ="Retry" visibility="hidden" onclick="(function () {
+        location.reload();
+        })();">
+        もう一回調べる
+    </button>
+    <p></p>
+
+    <div id="Share">
+        <a class="button twitter"
+           href="http://twitter.com/intent/tweet?text= http://www.geocities.jp/nero021/programming/HowManyYearsAgo/HowManyYearsAgo_Precure.html&hashtags=あのプリキュア何年前だっけ"
+           onclick="window.open(encodeURI(decodeURI(this.href)), 'tweetwindow', 'width=550, height=450, personalbar=0, toolbar=0, scrollbars=1, resizable=1' ); return false;"
+           target="_blank">
+            <!--<i class="fontawesome-twitter"></i>ツイート</a>-->
+            <span class="fontawesome-twitter"></span>ツイートする
+        </a>
+    </div>
+
+    <p>※ 基準は放送開始年です。</p>
+
+    <!--フッター-->
+    <div id="footer">
+        <p><a href="../ProgramsList.html">プログラム一覧に戻る</a></p>
+        <p>制作：奇々浦ヌル夫</p>
+        <p>バグ報告。要望等はこちらまで⇒<a href="http://twitter.com/k_nulluo" target="_blank">@k_nulluo</a></p>
+    </div>
+
+    <p></p>
+</body>
+</html>

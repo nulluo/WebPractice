@@ -1,0 +1,62 @@
+
+/* header */
+header{
+    width:100%;
+    background:  black;
+    border-bottom : solid 1px #aaaaaa;
+    margin-left:auto;
+    margin-right:auto;
+    box-shadow: 0 1px 7px #aaaaaa;
+    -webkit-box-shadow:0 1px 7px #aaaaaa;
+}
+
+header h1{
+    color: white;
+}
+
+/* ナビゲーションメニュー*/
+header nav ul  {
+    list-style-type: none;
+    margin-bottom: 0;
+    padding-left: 0;
+    font-size: 0;
+}
+
+header nav li {
+    display: inline;
+    background-color: white;
+    font-size: 16px;
+    border-top:solid 3px #aaaaaa;
+    border-right: solid 3px #aaaaaa;
+    /* border-top-left-radius: 10px; */
+    /* border-top-right-radius:10px; */
+    padding-top:10px;
+    padding-left:30px;
+    padding-right:30px;
+}
+
+header nav li:first-child{
+    border-left:solid 3px #aaaaaa
+}
+
+header nav{
+    width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: right;
+    margin-top: -32px;
+}
+
+header nav li:hover{
+    background-color: mediumseagreen;
+}
+
+
+/*現在表示中のページのタブを色変更する*/
+body.RulePage header nav .RulePage,
+body.DLPage header nav .DLPage,
+body.EnvironmentPage header nav .EnvironmentPage,
+body.LinkPage header nav .LinkPage{
+    background-color:  rgb(70, 252, 146);
+}
+

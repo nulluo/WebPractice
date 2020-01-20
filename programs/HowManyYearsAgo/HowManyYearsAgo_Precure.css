@@ -1,0 +1,23 @@
+﻿#Retry {
+    visibility: hidden;
+}
+
+#Share .button {
+    /*この下のやつだけでOKっぽい*/
+    padding: 0.5em 1em;
+    color: #fff;
+    font-size: 88%;
+    border-radius: 3px;
+    text-align: center;
+    line-height: 22px;
+    text-decoration: none;
+    text-shadow: 1px 1px 0 rgba(255,255,255,0.3);
+
+    /*UNIMPLEMENTED：なぜここでネガティブマージンが無いと隙間が空いてしまうのか？要調査*/
+    margin:-45px auto 10px auto;
+}
+
+.twitter {
+    background: #00acee;
+    box-shadow: 0 5px 0 #0092ca;
+}

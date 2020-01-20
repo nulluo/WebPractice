@@ -1,0 +1,64 @@
+﻿body {
+    background-color:white;
+}
+
+#InitialArea {
+    margin : 200px;
+    text-align:center;
+}
+
+
+#MessageArea{
+    /*margin:0 auto;*/
+    text-align: center;
+    visibility:hidden;
+}
+
+#GameBoard{
+   margin:0 auto; 
+      width:250px;
+       /* width:235px;*/
+    /*//UNIMPLEMENTED：カードの幅（47px）の倍数を指定してもうまく動作しないので若干上乗せしている。なぜか？未解明*/
+    visibility:hidden;
+
+}
+
+    #GameBoard li {
+        list-style: none;
+        float: left;
+    }
+
+    #GameBoard li img{
+        vertical-align: bottom;
+    }
+
+    #footer {
+    clear: left;
+    width: 60%;
+    margin-bottom: 200px;
+    margin: 0 auto;
+}
+    #footer #tweetShare{
+        margin : 20px;
+
+    }
+
+    #footer #history {
+        border: dashed;
+        text-align: left;
+    margin-bottom:500px;
+
+        }
+
+#testCodes{
+    clear:left;
+    margin-top:5px;
+    padding:5px;
+    /*visibility:hidden;*/
+}
+
+    #testCodes>table{
+        border:1px solid;
+        text-align:center;
+    }
+    

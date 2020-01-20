@@ -1,0 +1,642 @@
+﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+          "http://www.w3.org/TR/html4/loose.dtd">
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Script-Type" content="text/javascript">
+    <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
+    <link rel="stylesheet" type="text/css" href="UrapojiPelmanism.css">
+    <script type="text/javascript" src="UrapojiPelmanismCommon.js"></script>
+    <script type="text/javascript" src="jquery.js"></script>
+    <script type="text/javascript" src="jquery.socialbutton.js"></script>
+
+
+    <title></title>
+
+    <script type="text/javascript">
+<!--
+        
+        //グローバル変数宣言
+        var TimeLimit = TIME_LIMIT;
+        var Timer;
+        var ClearTime=0;
+
+        var SoundOn = false;
+
+        window.onload = init;
+        function init() {
+
+            //■クラス定義（即時関数）
+            (function (window) {
+
+                //↓　クラス：Card----------------------------------
+                // UNIMPLEMENTED：characterは本来Character型変数だがまずは文字列型として実装
+                // 引数：x:カードのX座標, y:カードのY座標, sequentialID:作品IDを無視して なぎさ=0,ほのか=1,,,と続く連番
+                function Card(x, y, sequentialID) {
+                    this.IndexX = x;
+                    this.IndexY = y;
+                    this.Character = GetPrecureID(sequentialID);
+                    this.ShowsFace = false;
+                    this.Erased = false;
+
+                    //引数：sequentialID：作品IDを無視して なぎさ=0,ほのか=1,,,と続く連番
+                    //戻り値：連番をプリキュアIDに変換した結果
+                    function GetPrecureID(sequentialID) {
+                        switch (sequentialID) {
+                            case 0: return '0101';
+                            case 1: return '0102';
+                            case 2: return '0103';
+                            case 3: return '0201';
+                            case 4: return '0202';
+                            case 5: return '0301';
+                            case 6: return '0302';
+                            case 7: return '0303';
+                            case 8: return '0304';
+                            case 9: return '0305';
+                            case 10: return '0306';
+                            case 11: return '0401';
+                            case 12: return '0402';
+                            case 13: return '0403';
+                            case 14: return '0404';
+                            case 15: return '0501';
+                            case 16: return '0502';
+                            case 17: return '0503';
+                            case 18: return '0504';
+                            case 19: return '0601';
+                            case 20: return '0602';
+                            case 21: return '0603';
+                            case 22: return '0604';
+                            case 23: return '0701';
+                            case 24: return '0702';
+                            case 25: return '0703';
+                            case 26: return '0704';
+                            case 27: return '0705';
+                            case 28: return '0801';
+                            case 29: return '0802';
+                            case 30: return '0803';
+                            case 31: return '0804';
+                            case 32: return '0805';
+                            case 33: return '0901';
+                            case 34: return '0902';
+                            case 35: return '0903';
+                            case 36: return '0904';
+                            case 37: return '1001';
+                            case 38: return '1002';
+                            case 39: return '1003';
+                            case 40: return '1004';
+                        }
+                    }
+                }
+
+                Card.TryEraseCards = function (card1, card2) {
+                    //UNIMPLEMENTED：デバッグコード除去
+                    console.log("card1:%d, card2:%d", card1.Character, card2.Character);
+                    if (card1.Character == card2.Character) {
+                        card1.Erased = true;
+                        card2.Erased = true;
+                        return true;
+                    } else {
+                        return false;
+                    }
+                };
+                window.Card = Card;
+                //↑　クラス：Card----------------------------------
+
+                //↓　クラス：GameBoard----------------------------------
+                //クラス：GameBoard
+                function GameBoard(maxColumns, maxRows) {
+
+                    //カードの盤面配置を作成する
+                    var characterArray = (function (maxColumns, maxRows) {
+                        var maxCards = maxColumns * maxRows;
+
+                        //フィールドを埋め尽くすのに必要な数のキャラクターの列（重複を許す）をランダムに決定する
+                        var cardsSequence = new Array(maxCards);
+
+                        for (cardIndex = 0; cardIndex < maxCards; cardIndex += 2) {
+                            var newChara = Math.floor(Math.random() * CHARACTERS_NUM);
+                            cardsSequence[cardIndex] = newChara;
+                            cardsSequence[cardIndex + 1] = newChara;
+                        }
+
+                        //キャラクター列をシャッフルする
+                        for (i = 0; i < 100; i++) {
+                            var swapTarget1, swapTarget2;
+                            swapTarget1 = Math.floor(Math.random() * maxCards);
+                            swapTarget2 = Math.floor(Math.random() * maxCards);
+
+                            var workForSwapping;
+                            workForSwapping = cardsSequence[swapTarget1];
+                            cardsSequence[swapTarget1] = cardsSequence[swapTarget2];
+                            cardsSequence[swapTarget2] = workForSwapping;
+                        }
+
+                        //シャッフル後のキャラクター列に従って、ゲーム盤面にカードを配置
+                        var cardsMatrix = new Array(maxRows);
+                        var settingCardIndex = 0
+
+                        for (row = 0; row <= maxRows - 1; row++) {
+                            var cardsRow = new Array(maxRows);
+                            //UNIMPLEMENTED：ここだけアンダーバーつきの変数名なのが統一性に欠ける
+                            for (col = 0; col <= maxColumns - 1; col++) {
+                                var _card = new Card(col, row, cardsSequence[settingCardIndex]);
+                                cardsRow[col] = _card;
+                                settingCardIndex++;
+                            }
+                            cardsMatrix[row] = cardsRow;
+                        }
+                        return cardsMatrix;
+                    })(maxColumns, maxRows);
+
+                    this.Cards = function (x, y) {
+                        //[y][x]という順序になる
+                        //UNIMPLEMENTED：デバッグコード除去　
+                        //console.log(' return new Card(%d, %d, characterArray[%d][%d]);',x,y,y,x);
+                        return characterArray[y][x];
+                    }
+
+                    //ゲームの状態を示す列挙型
+                    this.Status = {
+                        Initial: 0, //初期状態
+                        SelectingFirstCard: 1, //1枚目のカード選択中
+                        SelectingSecondCard: 2,//2枚目のカード選択中
+                        DisplayingMatchResult: 3,//同一判定結果表示中
+                        GameClear: 4, //ゲームクリアした
+                        GameOver: 5  //ゲームオーバーした
+
+                    }
+
+                    //現在のゲームの状態
+                    this.NowStatus = this.Status.SelectingFirstCard;
+                    this.FirstReversedCard = null;
+
+                    //UNIMPLEMENTED：動作確認のため、SecondReversedCardのプロパティを用意したが、おそらく最終的には不要となる。
+                    //（VB.NET版にもこのプロパティは存在しない）
+                    this.SecondReversedCard = null;
+
+                    this.Reverse = function (x, y) {
+                        //UNIMPLEMENTED：デバッグコード除去　
+                        console.log('var showsFace = this.Cards(%d,%d).ShowsFace;', x, y);
+                        var showsFace = this.Cards(x, y).ShowsFace;
+
+                        //UNIMPLEMENTED：デバッグコード除去　
+                        if (showsFace) {
+                            console.log('showsFace:true')
+                        } else {
+                            console.log('showsFace:false')
+                        }
+
+                        //UNIMPLEMENTED：このIF文で「裏→表」なのか「表→裏」なのかを振り分けているわけだが
+                        //そもそもReverseという関数で両方の挙動を実現しているのが無意味な気がしてきた
+                        if (showsFace) {
+                            this.Cards(x, y).ShowsFace = false;
+                            this.FirstReversedCard.ShowsFace = false;
+                            this.FirstReversedCard = null;
+                            //UNIMPLEMENTED：デバッグコード除去　
+                            console.log('Reverse処理実行中：同一カードチェック完了後、表→裏に戻す処理');
+
+                        } else {
+
+                            if (this.FirstReversedCard == null) {
+
+                                //UNIMPLEMENTED：デバッグコード除去　
+                                console.log('Reverse処理実行中：1手目の裏返しの場合');
+
+                                //1手目の裏返しの場合
+                                this.FirstReversedCard = gameBoard.Cards(x, y);
+                                this.Cards(x, y).ShowsFace = true;
+                                //UNIMPLEMENTED：デバッグコード除去　
+                                console.log('this.Cards(%d, %d).ShowsFace = true;', x, y);
+
+                                return ReverseResult.GetFirstReverseResult();
+                            } else {
+
+                                //2手目の裏返しの場合
+                                this.Cards(x, y).ShowsFace = true;
+                                //UNIMPLEMENTED：デバッグコード除去　
+                                console.log('this.Cards(%d, %d).ShowsFace = true;', x, y);
+
+                                var firstCard = this.FirstReversedCard;
+
+                                if (Card.TryEraseCards(firstCard, this.Cards(x, y))) {
+                                    //消去に成功した場合
+
+                                    //消去済みカード数2加算
+                                    erasedCardNumber += 2;
+
+                                    //カードが全部消えたかどうか判定する・
+                                    if (erasedCardNumber == maxRows * maxColumns) {
+                                        this.PlayerHasWon = true;
+                                        ClearTime = TIME_LIMIT - TimeLimit;
+                                    }
+
+                                    //UNIMPLEMENTED：デバッグコード除去　
+                                    return ReverseResult.GetSecondReverseResult(firstCard.IndexX, firstCard.IndexY, true);
+                                } else {
+
+                                    return ReverseResult.GetSecondReverseResult(firstCard.IndexX, firstCard.IndexY, false);
+                                }
+                            }
+                        }
+                    }
+
+                    //プレイヤーが勝利しているかどうか。
+                    this.PlayerHasWon = false;
+
+                    //Privateプロパティ
+                    var erasedCardNumber = 0;
+                }
+
+                window.GameBoard = GameBoard;
+                //↑　クラス：GameBoard----------------------------------
+
+                //↓　クラス：ReverseResult----------------------------------
+
+
+                //UNIMPLEMENTED：ReadOnlyプロパティって作れないのだろうか？
+                //とりあえず作れないと仮定してTwoCardsReversedやCardsMatchedは、読み書き可能なPublicプロパティとして作る
+
+                //コンストラクタ
+                // twoCardsReversed:=二枚のカードの裏返しが完了しているかどうか
+                // cardsMatched:=最初に裏返したカードと二枚目に裏返したカードが一致しているか
+                // firstCardX:=1枚目に裏返したカードのX座標, firstCardY:=1枚目に裏返したカードのY座標,
+                function ReverseResult(twoCardsReversed, cardsMatched, firstCardX, firstCardY) {
+                    //UNIMPLEMENTED：X座標、Y座標を受け取るのではなく、Cardオブジェクト自体を受け取るようにしたら引数がすっきりするんじゃない？
+
+                    this.TwoCardsReversed = twoCardsReversed;
+                    this.CardsMatched = cardsMatched;
+
+                    this.FirstCardX = firstCardX;
+                    this.FirstCardY = firstCardY;
+                }
+
+                //ReverseResultオブジェクト取得（二枚のカードの裏返しが完了していない場合）
+                ReverseResult.GetFirstReverseResult = function () {
+                    return new ReverseResult(false, false, -1, -1);
+                };
+
+                //ReverseResultオブジェクト取得（二枚のカードの裏返しが完了した場合）
+                // firstCardX:=1枚目に裏返したカードのX座標, firstCardY:=1枚目に裏返したカードのY座標,
+                // cardsMatched:=最初に裏返したカードと二枚目に裏返したカードが一致しているか
+                ReverseResult.GetSecondReverseResult = function (firstCardX, firstCardY, cardsMatched) {
+                    return new ReverseResult(true, cardsMatched, firstCardX, firstCardY);
+                };
+                window.ReverseResult = ReverseResult;
+
+                //↑　クラス：ReverseResult----------------------------------
+
+            }(window));
+
+            //■グローバル変数宣言
+            //UNIMPLEMENTED：グローバル変数の定義はこれでよいのか？
+            gameBoard = new GameBoard(BASIC_MAX_COLUMNS, BASIC_MAX_ROWS)
+
+            //アニメーション処理等、現在実行中のループ処理のループ回数をカウントする
+            loopCount = 0;
+
+            //■動的画面表示
+            //　・盤面作成
+            for (y = 0; y <= BASIC_MAX_ROWS - 1; y++) {
+                for (x = 0; x <= BASIC_MAX_COLUMNS - 1; x++) {
+                    //$("#GameBoard > ol").append("<li><img  src='Image\\Img" + gameBoard.Cards(y, x).Character + ".png' onclick=\"PreButtonClick(" + y + "," + x + ");\"/></li>")
+                    $("#GameBoard > ol").append("<li><img id = 'Card" + x + "_" + y + "' src='Image/CardBack.png' onclick=\"PreButtonClick(" + x + "," + y + ");\"/></li>")
+                }
+            }
+
+            //　・Tweetボタン生成
+            $('.TweetButton').socialbutton('twitter', {
+                button: 'horizontal',
+                text: '「うらポジ神経衰弱」#uraShinkei',
+                url: 'http://www.geocities.jp/nero021/programming/UrapojiPelmanism/UrapojiPelmanism.html'
+
+            });
+        }
+
+        //1秒ごとの処理
+        var TimerTick = function () {
+            //UNIMPLEMENTED：ここにgameBoard.Statusごとの状態判定組み込むべきでは？
+
+            Timer = setTimeout(TimerTick, 1000);
+            TimeLimit--;
+
+            //UNIMPLEMENTED：このIFもう少し整理できるのでは？
+            if (gameBoard.NowStatus != gameBoard.Status.GameClear) {
+                $("#Time").text("TIME LIMIT:" + zeroPadding(TimeLimit, 3));
+            }
+
+            if (TimeLimit <= 0 && gameBoard.NowStatus != gameBoard.Status.GameClear) {
+                $("#MessageArea > img").attr('src', 'Image/UI/MessageGameOver.gif');
+                $("#Time").text("");
+                gameBoard.NowStatus = gameBoard.Status.GameOver;
+            } else if (TimeLimit <= 10) {
+                $("#Time").css('color', 'red');
+            }
+            if (TimeLimit == 5) {
+                PlaySound("CountDown");
+            }
+        }
+
+        //プリキュアボタン押下後の処理：x:=X座標 y:=Y座標
+        function PreButtonClick(i, j) {
+
+            //状態1:1枚目カード選択中でも、状態2:2枚目カード選択中でもない場合、処理を抜ける
+            if (gameBoard.NowStatus != gameBoard.Status.SelectingFirstCard && gameBoard.NowStatus != gameBoard.Status.SelectingSecondCard) {
+                return;
+            }
+
+            //UNIMPLEMENTED：デバッグコード除去　
+            console.log('-----------------------------------');
+
+            var clickedCard = gameBoard.Cards(i, j);
+            //UNIMPLEMENTED：デバッグコード除去　
+            console.log("Cards(%d,%d):%d Clicked", i, j, clickedCard.Character);
+
+            //すでにカードが消滅した場所をクリックした場合、何もしない
+            if (clickedCard.Erased) {
+                return;
+            }
+
+            //'同じカードを二回連続でクリックした場合、裏返し処理を実行しないようにする
+            if (gameBoard.FirstReversedCard != null && gameBoard.NowStatus == gameBoard.Status.SelectingSecondCard) {
+                if (gameBoard.FirstReversedCard == clickedCard) {
+                    return;
+                }
+            }
+
+            //カードを表表示にする
+            if (gameBoard.NowStatus == gameBoard.Status.SelectingFirstCard || gameBoard.NowStatus == gameBoard.Status.SelectingSecondCard) {
+                ShowCardFace(clickedCard);
+
+                var result = gameBoard.Reverse(i, j);
+                if (result.TwoCardsReversed) {
+                    //状態変更：
+                    gameBoard.NowStatus = gameBoard.Status.DisplayingMatchResult;
+                    if (result.CardsMatched) {
+                        PlaySound("Correct");
+                        CardMatchedAction(clickedCard);
+                    } else {
+                        PlaySound("Incorrect");
+                        CardUnmatchedAction(clickedCard);
+                    }
+                } else {
+                    //状態変更：
+                    PlaySound("SelectFirstCard");
+                    gameBoard.NowStatus = gameBoard.Status.SelectingSecondCard;
+                }
+            }
+        }
+
+        //1枚目と2枚目のカードが一致した場合の処理
+        function CardMatchedAction(clickedCard) {
+            loopCount = 0;
+            var blinkMessage = setInterval(function () {
+
+                if (loopCount % 2 == 0) {
+                    $("#MessageArea > img").attr('src', 'Image/UI/MessageGood0.gif');
+                    DeleteCard(clickedCard);
+                    DeleteCard(gameBoard.FirstReversedCard);
+                } else {
+                    $("#MessageArea > img").attr('src', 'Image/UI/MessageGood1.gif');
+                    ShowCardFace(clickedCard);
+                    ShowCardFace(gameBoard.FirstReversedCard);
+                }
+                loopCount++;
+
+                //一定時間アクションしたら次状態へ遷移する。
+                if (loopCount > 5) {
+                   
+                    clearInterval(blinkMessage);
+                    loopCount = 0;
+                    DeleteCard(clickedCard);
+                    DeleteCard(gameBoard.FirstReversedCard);
+                    gameBoard.Reverse(clickedCard.IndexX, clickedCard.IndexY);
+                    //状態変更：
+                    if (gameBoard.PlayerHasWon) {
+                        gameBoard.NowStatus = gameBoard.Status.GameClear;
+
+                        //UNIMPLEMENTED：なぜかタイマーが停止しない。（停止しなくても正常に動作するようにはしたが・・・）
+                        Timer.ClearTimeout;
+
+
+                        $("#Time").text("");
+                        $("#MessageArea > img").attr('src', 'Image/UI/MessageClear.gif');
+                        $('.TweetButton').socialbutton('twitter', {
+                            button: 'horizontal',
+                            text: '「うらポジ神経衰弱」を'+ClearTime+'秒でクリアしました! #uraShinkei',
+                            url: 'http://www.geocities.jp/nero021/programming/UrapojiPelmanism/UrapojiPelmanism.html'
+                        });
+                        PlaySound("GameClear");
+                    } else {
+                        gameBoard.NowStatus = gameBoard.Status.SelectingFirstCard;
+                        $("#MessageArea > img").attr('src', 'Image/UI/MessageNothing.gif');
+                    }
+                }
+            }, 200);
+        }
+
+        //1枚目と2枚目のカードが一致しない場合の処理
+        function CardUnmatchedAction(clickedCard) {
+            loopCount = 0;
+
+            var blinkMessage = setInterval(function () {
+
+                //UNIMPLEMENTED：外れの場合に相応しいアニメーションは無いか？
+                if (loopCount % 2 == 0) {
+                    $("#MessageArea > img").attr('src', 'Image/UI/MessageMiss.gif');
+                } else {
+                    $("#MessageArea > img").attr('src', 'Image/UI/MessageNothing.gif');
+                }
+                loopCount++;
+
+                //一定時間アクションしたら次状態へ遷移する。
+                if (loopCount > 5) {
+                    $("#MessageArea > img").attr('src', 'Image/UI/MessageNothing.gif');
+                    clearInterval(blinkMessage);
+                    loopCount = 0;
+                    ShowCardBack(clickedCard);
+                    ShowCardBack(gameBoard.FirstReversedCard);
+                    gameBoard.Reverse(clickedCard.IndexX, clickedCard.IndexY);
+                    //状態変更：
+                    gameBoard.NowStatus = gameBoard.Status.SelectingFirstCard;
+                }
+            }, 200);
+        }
+        
+        //カードの表面を表示する。
+        function ShowCardFace(card) {
+            var x = card.IndexX;
+            var y = card.IndexY;
+            $("#Card" + x + "_" + y).attr('src', 'Image/Img' + card.Character + '.png');
+        }
+
+        //カードの裏面を表示する。
+        function ShowCardBack(card) {
+            var x = card.IndexX;
+            var y = card.IndexY;
+            $("#Card" + x + "_" + y).attr('src', 'Image/CardBack.png');
+        }
+
+        //カードを消す
+        function DeleteCard(card) {
+            var x = card.IndexX;
+            var y = card.IndexY;
+            $("#Card" + x + "_" + y).attr('src', 'Image/Reward/' + REWARD_FILE +"_"+ zeroPadding(x, 2) + '_' + zeroPadding(y, 2) + '.jpg');
+        }
+
+        //ゲーム画面を表示し、タイマーを起動する。
+        function GameStart() {
+      
+            if ($("#SoundOnCheck").prop('checked')) {
+                SoundOn = true;
+            }
+
+            //UNIMPLEMENTED：こうすると表示/非表示が切り替わらないのなぜ？
+            $("#InitialArea").css('display', 'none');
+            $("#MessageArea").css('visibility', 'visible');
+            $("#GameBoard").css('visibility', 'visible');
+            TimerTick();
+        }
+
+        //ファイル名を指定してサウンドを鳴らす。サウンドオフが指定された場合は何もしない。
+        //引数： SoundFile:=サウンドファイル名（拡張子無し）
+        function PlaySound(soundFile) {
+            if (SoundOn) {
+                $('#Sound' + soundFile).get(0).play();
+            }
+        }
+
+        //UNIMPLEMENTED：テスト用メソッドなので別ファイルに外出ししたい
+        //GameBoard.TryEraseCardメソッドの動作を確認
+        function TryEraseCardsTest() {
+            var card1 = gameBoard.FirstReversedCard
+            var card2 = gameBoard.SecondReversedCard
+
+            if (Card.TryEraseCards(card1, card2)) {
+                console.log("同一のカードです");
+            } else {
+                console.log("別のカードです");
+            }
+        }
+
+        //UNIMPLEMENTED：テスト用メソッドなので別ファイルに外出ししたい
+        //画像を変更するだけなので、カードの同一判定等は発生しない
+        function ShowAllCardsFace() {
+            for (y = 0; y <= BASIC_MAX_ROWS - 1; y++) {
+                for (x = 0; x <= BASIC_MAX_COLUMNS - 1; x++) {
+                    ShowCardFace(gameBoard.Cards(x, y));
+                }
+            }
+        }
+
+
+        //UNIMPLEMENTED：テスト用メソッドなので別ファイルに外出ししたい
+        function ClickAllCards() {
+            for (y = 0; y <= BASIC_MAX_ROWS - 1; y++) {
+                for (x = 0; x <= BASIC_MAX_COLUMNS - 1; x++) {
+                    PreButtonClick(x, y);
+                }
+            }
+        }
+
+        //UNIMPLEMENTED：テスト用メソッドなので別ファイルに外出ししたい
+        function DeleteAllCards() {
+            for (y = 0; y <= BASIC_MAX_ROWS - 1; y++) {
+                for (x = 0; x <= BASIC_MAX_COLUMNS - 1; x++) {
+                    DeleteCard(gameBoard.Cards(x, y));
+                }
+            }
+        }
+
+//-->
+    </script>
+
+
+</head>
+<body>
+    <noscript>
+        <h1>このページで遊ぶためには、JavaScriptを有効にしてください</h1>
+    </noscript>
+
+    <h1>うらポジ神経衰弱　ver. 0.0.1</h1>
+    <hr>
+
+    <!--初期画面-->
+    <div id="InitialArea">
+        <p>遊び方<br />カードを２枚クリックして同じプリキュアだった場合は消えます。<br />全部のカードを消したらあなたの勝ちです。</p>
+        <input type="checkbox" value="1" id="SoundOnCheck">音声を鳴らす<br>
+        <button onclick="GameStart();">ゲームスタート</button>
+    </div>
+    
+    <!--メッセージ領域-->
+    <div id="MessageArea">
+        <img src="Image/UI/MessageNothing.gif" />
+        <div id="Time"></div>
+    </div>
+
+    <div id="GameBoard">
+        <ol></ol>
+    </div>
+
+    <!--フッター-->
+    <div id="footer">
+        <p>つくった人⇒<a href="http://twitter.com/k_nulluo" target="_blank">@k_nulluo</a></p>
+        <p>プリキュアボタン作成⇒<a href="https://twitter.com/j9mz23" target="_blank">@j9mz23</a>さん</p>
+        <p>ご褒美イラスト協力⇒<a href="https://twitter.com/Karakuriya" target="_blank">@Karakuriya</a>さん</p>
+        <div class="TweetButton"></div>
+        <div id="history">
+            <p>★更新履歴★</p>
+            <ul>
+                <li>2016/01/31 Ver0.0.1.0:(試作版)：　公開開始</li>
+            </ul>
+        </div>
+
+    </div>
+
+    <!--テスト領域-->
+    <div id="testCodes">
+        <table  >
+            <tr>
+                <td>
+                    <p>テスト用コード</p>
+                    <button onclick="TryEraseCardsTest();">対象２つのカードが同一であるか判定</button>
+                    <button onclick="ClickAllCards();">全てのカードをクリックした時と同じ挙動をする</button>
+                    <button onclick="DeleteAllCards();">全てのカードを消去する</button>
+                    <button onclick="ShowAllCardsFace();">全てのカードの表面を表示する</button>
+                    
+                    <img src="Image/SizeCheck.jpg" />
+
+                    <p id="x"></p>
+                    <p id="y"></p>
+                </td>
+            </tr>
+        </table>
+    </div>
+    
+    <!-- 音声ファイル -->
+    <audio id="SoundSelectFirstCard" preload="auto">
+        <source src="Sound/SelectFirstCard.mp3" type="audio/mp3">
+        <source src="Sound/SelectFirstCard.wav" type="audio/wav">
+    </audio>
+    <audio id="SoundCorrect" preload="auto">
+        <source src="Sound/Correct.mp3" type="audio/mp3">
+        <source src="Sound/Correct.wav" type="audio/wav">
+    </audio>
+    <audio id="SoundIncorrect" preload="auto">
+        <source src="Sound/Incorrect.mp3" type="audio/mp3">
+        <source src="Sound/Incorrect.wav" type="audio/wav">
+    </audio>
+    <audio id="SoundGameClear" preload="auto">
+        <source src="Sound/GameClear.mp3" type="audio/mp3">
+        <source src="Sound/GameClear.wav" type="audio/wav">
+    </audio>
+    <audio id="SoundGameOver" preload="auto">
+        <source src="Sound/GameOver.mp3" type="audio/mp3">
+        <source src="Sound/GameOver.wav" type="audio/wav">
+    </audio>
+    <audio id="SoundCountDown" preload="auto">
+        <source src="Sound/CountDown.mp3" type="audio/mp3">
+        <source src="Sound/CountDown.wav" type="audio/wav">
+    </audio>
+
+</body>
+</html>

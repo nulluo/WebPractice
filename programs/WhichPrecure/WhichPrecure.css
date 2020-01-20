@@ -1,0 +1,115 @@
+﻿body {
+    text-align: center;
+    padding: 20px;
+}
+
+#initialArea {
+    margin : 200px;
+}
+
+#qAndAArea {
+    width: 800px;
+    height: 500px;
+    margin: auto;
+}
+
+    #qAndAArea #question {
+        width: 440px;
+        height: 460px;
+        border: 30px solid #ff9595;
+        border-top: 10px solid #ff9595;
+        background: white;
+        float: left;
+    }
+
+        #qAndAArea #question #challengeNo {
+            border: 10px solid #ff9595;
+            border-top: 0px;
+            float: left;
+            color: white;
+            background-color: #ff9595;
+            height: 50px;
+            width: 60px;
+        }
+
+            #qAndAArea #question #challengeNo p {
+                margin: 0;
+                line-height: 50px;
+                font-size:larger;
+                color:white;
+                
+            }
+
+        #qAndAArea #question #challengeText {
+            border-bottom: 10px solid #ff9595;
+            float: right;
+            color: #ff9595;
+            height: 50px;
+            width: 360px;
+            color:#ff9595;
+        }
+
+            #qAndAArea #question #challengeText p {
+                margin: 0;
+                line-height: 50px;
+                font-size:x-large;
+            }
+
+        #qAndAArea #question #imgWrap {
+            clear: left;
+            position: relative;
+            width: 440px;
+            height: 400px;
+        }
+
+            #qAndAArea #question #imgWrap img {
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                margin: auto;
+            }
+
+    #qAndAArea #buttonArea {
+        width: 260px;
+        height: 460px;
+        border: 20px solid #7c6fff;
+        background-color: #CCCCFF;
+        float: right;
+    }
+
+
+#ResultArea #correctRate {
+    clear: left;
+    font-size: xx-large;
+}
+
+
+#ResultArea #buttonArea{
+    text-align:center;
+} 
+
+#testCodes {
+    clear: left;
+}
+
+#footer {
+    clear: left;
+    width: 60%;
+    margin-bottom: 200px;
+    margin: 0 auto;
+}
+    #footer #tweetShare{
+        margin : 20px;
+
+    }
+
+    #footer #history {
+        border: dashed;
+        text-align: left;
+    margin:20px;
+    margin-bottom:500px;
+
+        }
+
